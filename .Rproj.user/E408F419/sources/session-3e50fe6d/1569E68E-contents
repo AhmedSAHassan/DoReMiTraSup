@@ -1,0 +1,114 @@
+---
+title: "DoReMiTra Use Case"
+subtitle: "Bioinformatics Group, IMBEI, University Medical Center Mainz"
+author:
+- name: Ahmed Salah
+  affiliation: 
+  - Institute of Medical Biostatistics, Epidemiology and Informatics (IMBEI), Mainz, Germany
+  email: ahhassan@uni-mainz.de
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+format:
+  html:
+    toc: true
+    number-sections: true
+    embed-resources: true
+    mainfont: "Atkinson Hyperlegible"
+    link-external-newwindow: true
+    theme: 
+    - cosmo
+    - ummz_theme.scss
+editor_options: 
+  chunk_output_type: console
+---
+
+# Loading the DoReMiTra Package
+
+```{r loadlib}
+library("DoReMiTra")
+
+```
+
+The user can use **`search_DoReMiTra_datasets()`** to filter the available DoReMiTra datasets based on metadata fields such as radiation type, organism, or experimental setting. This function helps narrow down datasets of interest before fetching them.
+
+```{r earch-datasets}
+
+search_DoReMiTra_datasets(radiation_type = "X-ray", 
+                          organism = "Homo sapiens", 
+                          exp_setting = "ExVivo")
+
+```
+
+# Fetching Datasets
+
+After selecting the dataset of interest, **`get_DoReMiTra_data()`** can be used to fetch a `SummarizedExperiment` (SE) object directly from ExperimentHub.
+
+```{r load-dataset}
+dataset_name_1 <- "SE_Broustas_2017_ExVivo_GSE90909_GPL13497"
+dataset_name_2 <- "SE_Salah_2025_ExVivo"
+
+
+se1 <- get_DoReMiTra_data(dataset_name_1, gene_symbol = TRUE)
+se2 <- get_DoReMiTra_data(dataset_name_2, gene_symbol = TRUE)
+
+```
+
+# Exploring the Datasets with DoReMiTra Explorer
+
+The retrieved SE objects can be explored with **`DoReMiTra_explorer()`**, an interactive Shiny application for visualization and exploratory analysis of DoReMiTra datasets. This app allows users to examine transcriptomic responses to radiation using:
+
+-   Principal component analysis (PCA)
+
+-   Boxplots
+
+-   Dose–response gene plots
+
+-   Heatmaps of highly variable genes
+
+It provides flexibility for both high-level overviews and detailed inspection of radiation-induced transcriptional patterns.
+
+### Installing and loading the app
+
+```{r Shiny-load}
+
+# Install the DoReMiTra-explorer Shiny App
+
+devtools::install_github("AhmedSAHassan/DoReMiTraExplorer")
+
+#Load the DoReMiTra Explorer package
+
+suppressWarnings(library("DoReMiTraExplorer"))
+
+
+```
+
+Example: PCA plot of `SE_Salah_2025_ExVivo` shows that donor and time effects are the main sources of variability. These factors should be accounted for in downstream statistical analyses.
+
+![](images/clipboard-3921792444.png)
+
+Users can also generate heatmaps of the top variable genes, with adjustable numbers of genes and optional hierarchical clustering.
+
+![](images/clipboard-3607577191.png)
+
+# Summarizing a Dataset
+
+To quickly obtain a summary of an SE object, use **`summarize_DoReMiTra_se()`**, which provides a concise overview including the number of samples, genes, radiation types, and other metadata.
+
+```{r summarize}
+
+summarize_DoReMiTra_se(se1)
+summarize_DoReMiTra_se(se2)
+
+```
+
+# Comparing Multiple Datasets
+
+To compare two or more SE objects from the DoReMiTra collection, **`compare_DoReMiTra_datasets()`** summarizes key metadata information such as radiation type, dose, and time point.
+
+```{r compare}
+
+se_list<- list(
+  Park = se1, 
+  Paul = se2
+)
+compare_DoReMiTra_datasets(se_list = se_list) |> kableExtra::kable()
+```
