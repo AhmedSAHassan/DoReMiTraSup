@@ -22,80 +22,67 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Loading the DoReMiTra Package
-
-```{r loadlib, include=FALSE}
-
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+```
 
+# Loading the DoReMiTra Package
 
+```{r loadlib, warning=FALSE}
 library("DoReMiTra")
 library("mosdef")
 library("org.Hs.eg.db")
 library("DESeq2")
 library("ggplot2")
 library("ComplexHeatmap")
-
 ```
 
 The user can use **`search_DoReMiTra_datasets()`** to filter the available DoReMiTra datasets based on metadata fields such as radiation type, organism, or experimental setting. This function helps narrow down datasets of interest before fetching them.
 
 ```{r search-datasets}
-
 search_DoReMiTra_datasets(radiation_type = "X-ray", 
                           organism = "Homo sapiens", 
                           exp_setting = "ExVivo")
-
 ```
 
-# Fetching Datasets
+# Fetching datasets
 
 After selecting the dataset of interest, **`get_DoReMiTra_data()`** can be used to fetch a `SummarizedExperiment` (SE) object directly from ExperimentHub.
 
 ```{r load-dataset}
-
 dataset_name_1 <- "SE_Salah_2025_ExVivo"
-
 se1 <- get_DoReMiTra_data(dataset_name_1)
 
+## TODO: here, we can already specify we want to also check this second dataset that relates well to ours
+## se2 <- get_DoReMiTra_data("")
 ```
 
-# Summarizing a Dataset
+# Inspecting a dataset
 
 To quickly obtain a summary of an SE object, use **`summarize_DoReMiTra_se()`**, which provides a concise overview including the number of samples, genes, radiation types, and other metadata.
 
 ```{r summarize}
-
 summarize_DoReMiTra_se(se1)
-
 ```
 
-# Once we retrieved the analysis-ready dataset of intereset, we can explore and analyse 
+Once we retrieved the analysis-ready dataset of intereset, we can explore it and analyse it in detail.
 
 ## PCA plot
 
 ```{r PCA-plot}
-
 # This dataset consists of 3 donors, 5 doses (0, 0.5, 1, 2, and 4Gy), and 2 timepoints (2h and 6h)
 
-dds<- DESeqDataSet(se1, design = ~ +1)
-
+dds <- DESeqDataSet(se1, design = ~ +1)
 dds$Dose <- factor(dds$Dose)
-
 dds$Donors <- factor(dds$Donors)
-
 dds$Dose <- relevel(dds$Dose, ref = "0Gy")
-
 dds_t1 <- dds[, dds$Time_point == "2hrs"]
-
 dds_t2 <- dds[, dds$Time_point == "6hrs"]
 
-
 vsd_Salah <- vst(dds)
-
 pca_plot <- plotPCA(vsd_Salah, 
                     intgroup = c("Donors", "Time_point"),
                     returnData = TRUE)
@@ -112,6 +99,11 @@ PCA<- ggplot(pca_plot, aes(x = PC1, y = PC2, color = Donors, shape = Time_point)
 
 PCA
 
+## TODO: compare to the vanilla output of...
+pcaExplorer::pcaplot(vsd_Salah, intgroup = c("Donors", "Time_point"), ellipse = FALSE)
+pcaExplorer::pcaplot(vsd_Salah, intgroup = "Time_point", ellipse = FALSE)
+pcaExplorer::pcaplot(vsd_Salah, intgroup = "Donors", ellipse = FALSE)
+pcaExplorer::pcaplot(vsd_Salah, intgroup = "Dose", ellipse = FALSE)
 ```
 
 ## Heatmap of the highly variable genes
@@ -120,7 +112,6 @@ PCA
 vsd_t1 <- vst(dds_t1)
 
 # as we have strong donor effect, we will account for it for better visualization
-
 vsd_corrected <- vsd_t1
 assay(vsd_corrected) <- limma::removeBatchEffect(assay(vsd_corrected), batch = vsd_corrected$Donors)
 
@@ -133,74 +124,79 @@ mat <- assay(vsd_corrected)[top_genes, ]
 mat_scaled <- t(scale(t(mat)))
 annotation <- as.data.frame(colData(vsd_corrected)[, c("Sex","Dose"), drop = FALSE])
 
-
 Heatmap(mat_scaled,
         name = "expression",
         top_annotation = HeatmapAnnotation(df = annotation))
 
+## TODO compare this to a...
+anno_genes <- data.frame(
+  gene_id = rownames(dds),
+  gene_name = paste0(rowData(dds)$SYMBOL, " - ", rownames(dds))
+)
+GeneTonic::gs_heatmap(vsd_corrected, 
+                      genelist = rownames(vsd_corrected)[top_genes], 
+                      anno_col_info = c("Dose", "Donors"),
+                      annotation_obj = anno_genes)
 ```
 
-## Alternatively, one can also explore  the datasets with DoReMiTraExplorer
+## Using DoReMiTraExplorer
+
+Alternatively, one can also explore  the datasets with DoReMiTraExplorer.
+
+The command to install the app is exemplified in the following chunk
+
+```{r exploinstall, eval = FALSE}
+# Install the DoReMiTra-explorer Shiny App
+devtools::install_github("AhmedSAHassan/DoReMiTraExplorer")
+```
 
 The retrieved SE objects can be explored with **`DoReMiTra_explorer()`**, an interactive Shiny application for visualization and exploratory analysis of DoReMiTra datasets. This app allows users to examine transcriptomic responses to radiation using:
 
--   Principal component analysis (PCA)
-
--   Boxplots
-
+-   Principal Component Analysis (PCA)
+-   Boxplots for the distribution of expression values
 -   Dose–response gene plots
-
 -   Heatmaps of highly variable genes
 
 It provides flexibility for both high-level overviews and detailed inspection of radiation-induced transcriptional patterns.
 
-### Installing and loading the app
+To load the app, we can simply call
 
-```{r Shiny-load}
-
-# Install the DoReMiTra-explorer Shiny App
-
-devtools::install_github("AhmedSAHassan/DoReMiTraExplorer")
-
+```{r runapp, warning=FALSE}
 #Load the DoReMiTra Explorer package
-
-suppressWarnings(library("DoReMiTraExplorer"))
-
+library("DoReMiTraExplorer")
+if(interactive()) {
+  DoReMiTraExplorer::DoReMiTra_explorer(se = se1)
+}
 ```
 
-```{r run-app, eval=FALSE}
+TODO: here, it can make sense to enter a "static screenshot" of the app to show users how it could look like. This you can generate once, and then call as a `![alttext for the image](linktoimage.png)`
 
-DoReMiTra_explorer(se1)
-```
+# Analyzing a dataset in detail
 
-## As we see from the PCA plot, the donor and time effects are the main sources of variability. These factors should be accounted for in downstream statistical analyses.
+As we see from the PCA plot, the donor and time effects are the main sources of variability. These factors should be accounted for in downstream statistical analyses.  
+Specifically, we use in this case the DESeq2 statistical framework, and focus on the XX vs YY TODO comparison.
 
 ```{r analyse}
-
 design(dds_t1)<- ~ Donors + Dose
 
 dds_t1 <- DESeq(dds_t1)
-
 resultsNames(dds_t1)
 
 # we will focus on one contrast here, 1Gy vs 0Gy
-
-resuls_Salah<- results(dds_t1, 
-                       name = "Dose_1Gy_vs_0Gy", 
-                       alpha = 0.05)
-
-summary(resuls_Salah)
-
-resuls_Salah_shrink <- lfcShrink(dds_t1, 
-                                 res = resuls_Salah, 
-                                 coef = "Dose_1Gy_vs_0Gy")
+results_Salah<- results(dds_t1, 
+                        name = "Dose_1Gy_vs_0Gy", 
+                        alpha = 0.05)
+summary(results_Salah)
+results_Salah_shrink <- lfcShrink(dds_t1, 
+                                  res = results_Salah, 
+                                  coef = "Dose_1Gy_vs_0Gy")
 ```
 
-## We can also visualize the up and down regulated genes via volcano plot
-```{r volcanoPlot}
+We can also visualize the up and down regulated genes via volcano plot
 
+```{r volcanoPlot}
 volcPlot <- de_volcano(
-  res_de = resuls_Salah_shrink,
+  res_de = results_Salah_shrink,
   mapping = "org.Hs.eg.db",
   labeled_genes = 50,
   logfc_cutoff = 0
@@ -211,12 +207,13 @@ volcPlot
 # As we see here the highest X-ray sensitive genes are CDKN1A, AEN, and CD83 upon 1Gy exposure
 ```
 
-# Comparing Multiple Datasets
+TODO: We could simply run here an enrichment analysis on that result (mosdef::clupro?)
+
+# Comparing multiple datasets with `DoReMiTra`
 
 To compare two or more SE objects from the DoReMiTra collection, **`compare_DoReMiTra_datasets()`** summarizes key metadata information such as radiation type, dose, and time point.
 
 ```{r compare}
-
 se2 <- get_DoReMiTra_data("SE_Paul_2013_ExVivo_GSE44201_GPL6480")
 
 se_list<- list(
@@ -225,3 +222,17 @@ se_list<- list(
 )
 compare_DoReMiTra_datasets(se_list = se_list) |> kableExtra::kable()
 ```
+
+TODO: Of course, more detailed information can be provided when integrating the two datasets at the level of differentially expressed features, or also at the pathway level
+
+TODO: take another dataset, run DE on that, run enrichment, check some D1 genes in the D2 dataset, and viceversa. Check one regulated pathway from D1 in the D2, and viceversa
+
+TODO: especially here, please give the datasets and the objects some meaningful names
+
+# Session info {-}
+
+```{r sessioninfo}
+sessionInfo()
+```
+
+
