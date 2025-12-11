@@ -1,6 +1,8 @@
 ---
-title: "DoReMiTra Use Case"
-subtitle: "Bioinformatics Group, IMBEI, University Medical Center Mainz"
+title: >
+  Using DoReMiTra for analyzing and integrating publicly available transcriptomics radiation datasets
+subtitle: >
+  Supplementary file for 'DoReMiTra: An R/Bioconductor data package for orchestrating the analysis of radiation transcriptomic studies'
 author:
 - name: Ahmed Salah
   affiliation: 
@@ -31,7 +33,7 @@ knitr::opts_chunk$set(
 
 # Loading the DoReMiTra Package
 
-```{r loadlib, warning=FALSE}
+```{r loadlib, warning=FALSE, message=FALSE}
 library("DoReMiTra")
 library("mosdef")
 library("org.Hs.eg.db")
