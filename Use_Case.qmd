@@ -1,12 +1,21 @@
 ---
-title: "DoReMiTra Use Case"
-subtitle: "Bioinformatics Group, IMBEI, University Medical Center Mainz"
+title: >
+  Using DoReMiTra for analyzing and integrating publicly available transcriptomics radiation datasets
+subtitle: >
+  Supplementary file for 'DoReMiTra: An R/Bioconductor data package for orchestrating the analysis of radiation transcriptomic studies'
 author:
 - name: Ahmed Salah
   affiliation: 
   - Department of Radiation Oncology and Radiation Therapy, Mainz, Germany
   - Institute of Medical Biostatistics, Epidemiology and Informatics (IMBEI), Mainz, Germany
   email: ahhassan@uni-mainz.de
+- name: Sebastian Zahnreich
+  affiliation: 
+  - Department of Radiation Oncology and Radiation Therapy, Mainz, Germany
+- name: Federico Marini
+  affiliation: 
+  - Institute of Medical Biostatistics, Epidemiology and Informatics (IMBEI), Mainz, Germany
+  email: marinif@uni-mainz.de
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 format:
   html:
@@ -18,6 +27,7 @@ format:
     theme: 
     - cosmo
     - ummz_theme.scss
+bibliography: DRMTS.bib
 editor_options: 
   chunk_output_type: console
 ---
