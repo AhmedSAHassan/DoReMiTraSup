@@ -440,55 +440,116 @@ res_enrich_paul <- enrichGO(results_paul_sig$SYMBOL,
 )
 
 res_enrich_paul_sig <- res_enrich_paul@result[res_enrich_paul@result$p.adjust <= 0.05, ]
+
+res_enrich_paul_sig |> 
+  head() |> 
+  knitr::kable()
 ```
 
-Similarly to X-ray dataset from Salah_2025, the regulated pathways were mainly involved in DNA damage and immune responses.
+Similarly to X-ray dataset from `se_salah`, many of the regulated pathways were involved in processes such as DNA damage repair, immune response, and response to UV.
 
 # Integrating the results from both studies 
 
-TODO: Of course, more detailed information can be provided when integrating the two datasets at the level of differentially expressed features, or also at the pathway level
-
-TODO: take another dataset, run DE on that, run enrichment, check some D1 genes in the D2 dataset, and viceversa. Check one regulated pathway from D1 in the D2, and viceversa
-
-TODO: especially here, please give the datasets and the objects some meaningful names
-
-
 Checking the shared genes between both radiation types, at the same timepoint and radiation dose
 
-```{r compare-datasets}
-result_Salah_sig<- na.omit(result_Salah_sig)
+```{r compare-datasets, message=FALSE}
+result_salah_sig<- na.omit(result_salah_sig)
 
-# Venndiagram
+# creating a simple venn diagram first
 venn.plot <- venn.diagram(
   x = list(
-    Salah = result_Salah_sig$SYMBOL,
-    Paul = results_Paul_sig$SYMBOL
+    Salah = result_salah_sig$SYMBOL,
+    Paul = results_paul_sig$SYMBOL
   ),
-  filename = NULL,  # Plot to R directly
   fill = c("#8da0cb", "orange"),
   alpha = 0.6,
   cat.cex = 1.2,
   cex = 1.5,
-  main = "Shared and Distinct signature"
-)
+  main = "Overlap of DE genes - Shared and distinct signatures", 
+  filename = NULL,  
+  disable.logging = TRUE)
 
 grid::grid.draw(venn.plot)
 
 # shared signature between X and gamma rays
-
-intersect(result_Salah_sig$SYMBOL, results_Paul_sig$SYMBOL)
+intersect(result_salah_sig$SYMBOL, results_paul_sig$SYMBOL)
 
 # gamma-ray only signature
-
-setdiff(results_Paul_sig$SYMBOL, result_Salah_sig$SYMBOL)
+setdiff(results_paul_sig$SYMBOL, result_salah_sig$SYMBOL)
 
 # X-ray only signature
+setdiff(result_salah_sig$SYMBOL, results_paul_sig$SYMBOL)
+```
 
-setdiff(result_Salah_sig$SYMBOL, results_Paul_sig$SYMBOL)
+Another way to display the shared and distinct regulation happening at the overall transcriptome level would be a logFC-logFC plot - of course, with the caveat of these two datasets originating from two different technology platforms (RNA-seq for `se_salah` and microarray for `se_paul`)
+
+```{r}
+dim(results_salah_shrink)
+dim(results_paul)
+
+results_salah_shrink$SYMBOL <- mapIds(
+  org.Hs.eg.db,
+  keys = rownames(results_salah_shrink),
+  column = "SYMBOL",
+  keytype = "ENSEMBL",
+  multiVals = "first"
+)
+
+results_paul$SYMBOL <- rownames(results_paul)
+
+merged_results <- merge.data.frame(x = as.data.frame(results_salah_shrink), 
+                                   y = results_paul, 
+                                   by = "SYMBOL") 
+merged_results$DE_salah <- merged_results$padj <= 0.05 & !is.na(merged_results$padj)
+merged_results$DE_paul <- merged_results$adj.P.Val <= 0.05
+
+ggplot(merged_results,
+       aes(x = log2FoldChange, y = logFC, col = DE_salah)) + 
+  geom_point() + 
+  scale_color_manual(values = c(scales::alpha("black", 0.3), "firebrick")) + 
+  theme_bw() + 
+  labs(x = "logFC - RNA-seq", 
+       y = "logFC - microarray",
+       title = "Highlighting DE genes from Salah et al.")
+ggplot(merged_results,
+         aes(x = log2FoldChange, y = logFC, col = DE_paul)) + 
+  geom_point() + 
+  scale_color_manual(values = c(scales::alpha("black", 0.3), "firebrick")) + 
+  theme_bw() + 
+  labs(x = "logFC - RNA-seq", 
+       y = "logFC - microarray",
+       title = "Highlighting DE genes from Paul et al.")
+```
+
+We can appreciate better how the gene expression regulation is to be assessed in quantitative nuances that overcome the dichotomization between significance or not, and the scatter plot of effect sizes can also better highlight the concordance in regulation direction.
+
+One can also easily plot a geneset signature derived from one dataset (e.g. GO:0009411, response to UV, found in the microarray analysis), using the expression values of the other (Salah et al.).
+
+```{r heatmapsig}
+genes_uvresponse_paul <- res_enrich_paul_sig[res_enrich_paul_sig$ID == "GO:0009411", "geneID"] |> 
+  strsplit(split = "/") |> 
+  unlist()
+
+genes_uvresponse_paul_ensembl <- mapIds(org.Hs.eg.db, 
+                                        keys = genes_uvresponse_paul, 
+                                        column = "ENSEMBL", 
+                                        keytype = "SYMBOL")
+
+GeneTonic::gs_heatmap(se = vsd_corrected,
+                      gtl = gtl_salah_6h,
+                      genelist = genes_uvresponse_paul_ensembl,
+                      plot_title = "Using the DE genes from Paul et al.")
+
+GeneTonic::gs_heatmap(se = vsd_corrected,
+                      gtl = gtl_salah_6h,
+                      geneset_id = "GO:0009411", 
+                      plot_title = "Using the original DE genes for UV response from Salah et al.")
 
 ```
 
-TODO: logFC logFC plot, at least? On the common genes
+While most of the genes are shared, the higher power in DE detection from Salah et al. made it possible to identify a more comprehensive signature linked to this biological process.
+
+This notebook can be further expanded to include additional datasets - e.g., scenarios where some discordant regulation is expected. Having `DoReMiTra` providing a number of them in this analysis-ready format makes it easy to explore them in detail, ultimately better understanding the transcriptional changes occurring upon radiation.
 
 # Session info {-}
 
