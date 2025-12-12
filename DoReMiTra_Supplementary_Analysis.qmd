@@ -261,6 +261,10 @@ result_salah_sig$SYMBOL <- mapIds(
   keytype = "ENSEMBL",
   multiVals = "first"
 )
+
+result_salah_sig |> 
+  head(10) |> 
+  knitr::kable()
 ```
 
 We can also visualize the up and down regulated genes via a volcano plot
@@ -292,7 +296,7 @@ res_enrich_salah <- enrichGO(result_salah_sig$SYMBOL,
 
 res_enrich_salah_sig <- res_enrich_salah@result[res_enrich_salah@result$p.adjust <= 0.05, ]
 res_enrich_salah_sig |> 
-  head() |> 
+  head(20) |> 
   knitr::kable()
 ```
 
@@ -418,7 +422,7 @@ results_paul <- topTable(fit2_paul, number = Inf)
 results_paul_sig <- results_paul[ results_paul$adj.P.Val<= 0.05,]
 
 results_paul_sig |> 
-  head() |> 
+  head(10) |> 
   knitr::kable()
 ```
 
@@ -442,7 +446,7 @@ res_enrich_paul <- enrichGO(results_paul_sig$SYMBOL,
 res_enrich_paul_sig <- res_enrich_paul@result[res_enrich_paul@result$p.adjust <= 0.05, ]
 
 res_enrich_paul_sig |> 
-  head() |> 
+  head(20) |> 
   knitr::kable()
 ```
 
