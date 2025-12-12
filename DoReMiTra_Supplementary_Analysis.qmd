@@ -9,13 +9,16 @@ author:
   - Department of Radiation Oncology and Radiation Therapy, Mainz, Germany
   - Institute of Medical Biostatistics, Epidemiology and Informatics (IMBEI), Mainz, Germany
   email: ahhassan@uni-mainz.de
+  orcid: 0000-0001-7003-4466
 - name: Sebastian Zahnreich
   affiliation: 
   - Department of Radiation Oncology and Radiation Therapy, Mainz, Germany
+  orcid: 0000-0001-8365-3258
 - name: Federico Marini
   affiliation: 
   - Institute of Medical Biostatistics, Epidemiology and Informatics (IMBEI), Mainz, Germany
   email: marinif@uni-mainz.de
+  orcid: 0000-0003-3252-7758
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 format:
   html:
