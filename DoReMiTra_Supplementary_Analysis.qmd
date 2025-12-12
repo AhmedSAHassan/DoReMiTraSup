@@ -553,7 +553,13 @@ GeneTonic::gs_heatmap(se = vsd_corrected,
 
 While most of the genes are shared, the higher power in DE detection from Salah et al. made it possible to identify a more comprehensive signature linked to this biological process.
 
+Similarly to what we have just showcased, it is possible to compare other genesets and signatures across the individual datasets, e.g. apoptosis, response to DNA damage, and immune responses.
+
+# Wrapping up
+
 This notebook can be further expanded to include additional datasets - e.g., scenarios where some discordant regulation is expected. Having `DoReMiTra` providing a number of them in this analysis-ready format makes it easy to explore them in detail, ultimately better understanding the transcriptional changes occurring upon radiation.
+
+Overall, data integration and comparison through well-curated radiation transcriptomic datasets available through the `DoReMiTra` collection is useful in biomarker discovery upon radiation exposure.
 
 # Session info {-}
 
