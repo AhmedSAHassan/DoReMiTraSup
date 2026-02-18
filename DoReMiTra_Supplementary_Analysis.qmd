@@ -70,7 +70,7 @@ knitr::kable(datasets)
 
 # Searching for datasets
 
-The user can use **`search_DoReMiTra_datasets()`** to filter the available DoReMiTra datasets based on metadata fields such as radiation type, organism, or experimental setting. This function helps narrow down datasets of interest before fetching them.
+The user can use **`search_DoReMiTra_datasets()`** to filter the available DoReMiTra datasets based on metadata fields such as radiation type, organism, GEO accession, or experimental setting. This function helps narrow down datasets of interest before fetching them.
 
 ```{r search-datasets}
 # X-ray datasets
