@@ -140,7 +140,7 @@ compare_DoReMiTra_datasets(se_list = se_list) |>
   kableExtra::kable()
 ```
 
-# Using DoReMiTraExplorer for exploratory data analyses
+# Using DoReMiTraExplorer for exploratory data analyses and visualization
 
 One can also explore the datasets with `DoReMiTraExplorer`, a companion app package we have developed.
 
