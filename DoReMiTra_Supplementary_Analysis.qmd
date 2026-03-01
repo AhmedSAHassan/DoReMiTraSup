@@ -70,7 +70,7 @@ knitr::kable(datasets)
 
 # Searching for datasets
 
-The user can use **`search_DoReMiTra_datasets()`** to filter the available DoReMiTra datasets based on metadata fields such as radiation type, organism, GEO accession, or experimental setting. This function helps narrow down datasets of interest before fetching them.
+The user can use **`search_DoReMiTra_datasets()`** to filter the available DoReMiTra datasets based on metadata fields such as radiation type, organism, author, or experimental setting. This function helps narrow down datasets of interest before fetching them.
 
 ```{r search-datasets}
 # X-ray datasets
@@ -87,7 +87,7 @@ search_DoReMiTra_datasets(radiation_type = "gamma ray",
 
 # Retrieving the datasets
 
-After selecting the dataset of interest, **`get_DoReMiTra_data()`** can be used to fetch a `SummarizedExperiment` (SE) object directly from ExperimentHub.
+After selecting the dataset of interest, **`get_DoReMiTra_data()`** can be used to fetch a `SummarizedExperiment` (SE) object with stable gene identifiers and consistently formatted sample-level metadata directly from ExperimentHub. 
 
 ```{r load-datasets}
 # we start with a recent study by Salah et al., conducted on RNA-seq
@@ -104,7 +104,7 @@ These simple commands provide the user an analysis-ready object for the datasets
 
 # Obtaining summaries of the datasets
 
-To quickly obtain a summary of an SE object, use **`summarize_DoReMiTra_se()`**, which provides a concise overview including the number of samples, genes, radiation types, and other metadata.
+To quickly obtain a summary of an SE object, use **`summarize_DoReMiTra_se()`**, which provides a concise overview including the number of samples, genes, radiation types, tissue, etc.
 
 ```{r summarize}
 summarize_DoReMiTra_se(se_salah)
@@ -159,8 +159,7 @@ if(interactive()) {
 ```
 
 ![Snapshot of the DoReMiTraExplorer app](images/clipboard-3009620933.png)
-
-
+![Snapshot of the DoReMiTraExplorer app](images/GenePlot.png)
 # Analyzing the datasets, in detail
 
 Once we identified and retrieved the analysis-ready datasets of intereset, we can explore and analyse them.
