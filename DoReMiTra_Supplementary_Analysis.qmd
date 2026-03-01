@@ -70,7 +70,9 @@ knitr::kable(datasets)
 
 # list medatada information
 
-`list_DoReMiTra_metadata_feilds()` function displays the available metadata fields across all DoReMiTra datasets along with the unique values observed for each field.It facilitates intuitive dataset discovery and filtering.
+The **`list_DoReMiTra_metadata_fields()`** function provides an overview of the available sample-level metadata fields across all datasets included in DoReMiTra. For each metadata variable, the function reports the unique values observed across the compendium.
+
+This utility facilitates intuitive dataset exploration and helps users identify appropriate filtering criteria before retrieving datasets with search_DoReMiTra_datasets() or get_DoReMiTra_dataset(). In particular, it allows users to quickly inspect supported categories such as radiation type, dose, time point, organism, tissue, and other study-specific annotations.
 
 ```{r explore-medatada-info}
 
