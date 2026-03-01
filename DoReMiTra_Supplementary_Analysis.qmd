@@ -68,6 +68,16 @@ datasets <- list_DoReMiTra_datasets()
 knitr::kable(datasets)
 ```
 
+# list medatada information
+
+`list_DoReMiTra_metadata_feilds()` function displays the available metadata fields across all DoReMiTra datasets along with the unique values observed for each field.It facilitates intuitive dataset discovery and filtering.
+
+```{r explore-medatada-info}
+
+list_DoReMiTra_metadata_fields()
+
+```
+
 # Searching for datasets
 
 The user can use **`search_DoReMiTra_datasets()`** to filter the available DoReMiTra datasets based on metadata fields such as radiation type, organism, author, or experimental setting. This function helps narrow down datasets of interest before fetching them.
