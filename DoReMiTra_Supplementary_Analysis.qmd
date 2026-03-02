@@ -172,8 +172,11 @@ if(interactive()) {
 }
 ```
 
-![Snapshot of the DoReMiTraExplorer app](images/clipboard-3009620933.png)
-![Snapshot of the DoReMiTraExplorer app](images/GenePlot.png)
+![Snapshot of the DoReMiTraExplorer app for PCA plot](images/clipboard-3009620933.png)
+
+![Snapshot of the DoReMiTraExplorer app dose-response gene plot](images/GenePlot.png)
+
+
 # Analyzing the datasets, in detail
 
 Once we identified and retrieved the analysis-ready datasets of intereset, we can explore and analyse them.
