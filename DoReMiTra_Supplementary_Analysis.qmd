@@ -70,7 +70,7 @@ datasets <- list_DoReMiTra_datasets()
 knitr::kable(datasets)
 ```
 
-# List medatada information
+# List metadata information
 
 The **`list_DoReMiTra_metadata_fields()`** function provides an overview of the available sample-level metadata fields across all datasets included in DoReMiTra. For each metadata variable, the function reports the unique values observed across the compendium.
 
