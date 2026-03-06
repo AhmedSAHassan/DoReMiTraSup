@@ -67,7 +67,7 @@ Users can use the **`list_DoReMiTra_datasets()`** function to have a concise ove
 
 ```{r list-datasets}
 datasets <- list_DoReMiTra_datasets()
-knitr::kable(datasets)
+datasets |> head() |> knitr::kable()
 ```
 
 # Listing metadata information
@@ -289,7 +289,7 @@ result_salah_sig$SYMBOL <- mapIds(
 )
 
 result_salah_sig |> 
-  head(10) |> 
+  head() |> 
   knitr::kable()
 ```
 
@@ -309,6 +309,7 @@ As we can see here, among the highest X-ray sensitive genes upon 2Gy exposure we
 From this point, we can also perform a functional enrichment analysis to see what pathways are regulated
 
 ```{r xray-enrichment}
+
 res_enrich_salah <- enrichGO(result_salah_sig$SYMBOL,
                              keyType = "SYMBOL",
                              ont = "BP",
@@ -322,7 +323,7 @@ res_enrich_salah <- enrichGO(result_salah_sig$SYMBOL,
 
 res_enrich_salah_sig <- res_enrich_salah@result[res_enrich_salah@result$p.adjust <= 0.05, ]
 res_enrich_salah_sig |> 
-  head(20) |> 
+  head() |> 
   knitr::kable()
 ```
 
@@ -448,7 +449,7 @@ results_paul <- topTable(fit2_paul, number = Inf)
 results_paul_sig <- results_paul[ results_paul$adj.P.Val<= 0.05,]
 
 results_paul_sig |> 
-  head(10) |> 
+  head() |> 
   knitr::kable()
 ```
 
@@ -472,7 +473,7 @@ res_enrich_paul <- enrichGO(results_paul_sig$SYMBOL,
 res_enrich_paul_sig <- res_enrich_paul@result[res_enrich_paul@result$p.adjust <= 0.05, ]
 
 res_enrich_paul_sig |> 
-  head(20) |> 
+  head() |> 
   knitr::kable()
 ```
 
