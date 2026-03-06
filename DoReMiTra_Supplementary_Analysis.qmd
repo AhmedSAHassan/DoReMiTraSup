@@ -61,7 +61,7 @@ library("clusterProfiler")
 library("patchwork")
 ```
 
-# List All Available Datasets
+# Listing all available datasets
 
 Users can use the **`list_DoReMiTra_datasets()`** function to have a concise overview of all datasets currently available in the DoReMiTra collection. It returns a structured data.frame including dataset identifiers and key descriptive information, allowing users to quickly inspect the available resources before retrieval.
 
@@ -70,7 +70,7 @@ datasets <- list_DoReMiTra_datasets()
 knitr::kable(datasets)
 ```
 
-# List metadata information
+# Listing metadata information
 
 The **`list_DoReMiTra_metadata_fields()`** function provides an overview of the available sample-level metadata fields across all datasets included in DoReMiTra. For each metadata variable, the function reports the unique values observed across the compendium.
 
